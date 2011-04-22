@@ -1,5 +1,5 @@
 Name: xdriinfo
-Version: 1.0.2
+Version: 1.0.4
 Release: alt1
 Summary: query configuration information of DRI drivers
 License: MIT/X11
@@ -7,10 +7,10 @@ Group: System/X11
 Url: http://xorg.freedesktop.org
 Packager: Valery Inozemtsev <shrek@altlinux.ru>
 
-Source: %name-%version.tar.bz2
+Source: %name-%version.tar
+Patch: %name-%version-%release.patch
 
-BuildRequires: xorg-glproto-devel libX11-devel libGL-devel
-BuildRequires: xorg-util-macros libXdmcp-devel libXau-devel
+BuildRequires: libGL-devel xorg-glproto-devel xorg-util-macros
 
 %description
 xdriinfo  can be used to query configuration information of direct ren-
@@ -34,6 +34,9 @@ of the direct rendering drivers for all screens
 %_man1dir/*
 
 %changelog
+* Fri Apr 22 2011 Valery Inozemtsev <shrek@altlinux.ru> 1.0.4-alt1
+- 1.0.4
+
 * Sat Aug 18 2007 Valery Inozemtsev <shrek@altlinux.ru> 1.0.2-alt1
 - 1.0.2
 
