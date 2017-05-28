@@ -1,6 +1,6 @@
 Name: xdriinfo
 Version: 1.0.4
-Release: alt1
+Release: alt2
 Summary: query configuration information of DRI drivers
 License: MIT/X11
 Group: System/X11
@@ -19,6 +19,7 @@ of the direct rendering drivers for all screens
 
 %prep
 %setup -q
+%patch -p1
 
 %build
 %autoreconf
@@ -34,6 +35,11 @@ of the direct rendering drivers for all screens
 %_man1dir/*
 
 %changelog
+* Sun May 28 2017 L.A. Kostis <lakostis@altlinux.ru> 1.0.4-alt2
+- Added patch:
+  Fix-xdriinfo-not-working-with-glvnd: fix glx calls to work with GLVND setup
+  (author Hans de Goede).
+
 * Fri Apr 22 2011 Valery Inozemtsev <shrek@altlinux.ru> 1.0.4-alt1
 - 1.0.4
 
