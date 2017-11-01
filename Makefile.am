@@ -21,9 +21,9 @@
 SUBDIRS = man
 bin_PROGRAMS = xdriinfo
 
-AM_CFLAGS = $(CWARNFLAGS) $(XDRIINFO_CFLAGS)
+AM_CFLAGS = $(CWARNFLAGS) $(XDRIINFO_CFLAGS) $(LIBDRM_CFLAGS)
 # mesa should really use pkg-config ...
-xdriinfo_LDADD = $(XDRIINFO_LIBS)
+xdriinfo_LDADD = $(XDRIINFO_LIBS) $(LIBDRM_LIBS)
 
 xdriinfo_SOURCES =	\
         xdriinfo.c

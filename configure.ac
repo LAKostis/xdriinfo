@@ -38,6 +38,7 @@ XORG_DEFAULT_OPTIONS
 
 # Checks for pkg-config packages
 PKG_CHECK_MODULES(XDRIINFO, x11 glproto)
+PKG_CHECK_MODULES(LIBDRM, libdrm)
 
 # Checks for non-pkg-config packages (Mesa or vendor OpenGL)
 AC_SEARCH_LIBS([glXGetProcAddressARB], [GL], [],

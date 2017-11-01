@@ -33,6 +33,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <xf86drm.h>
 
 typedef const char * glXGetScreenDriver_t (Display *dpy, int scrNum);
 typedef const char * glXGetDriverConfig_t (const char *driverName);
@@ -43,6 +46,63 @@ static glXGetDriverConfig_t *GetDriverConfig;
 enum INFO_FUNC {
     LIST, NSCREENS, DRIVER, OPTIONS
 };
+
+const char *name = NULL;
+
+/* inspried by libva */
+struct driver_name_map {
+    const char *key;
+    int         key_len;
+    const char *name;
+};
+
+static const struct driver_name_map g_driver_name_map[] = {
+    { "i915",       4, "i965"   }, // Intel OTC GenX driver
+    { "radeon",     6, "r600"     }, // Mesa Gallium driver
+    { "amdgpu",     6, "radeonsi" }, // Mesa Gallium driver
+    { NULL, }
+};
+
+static char * get_drm_device(int fd_id) {
+   int drm_fd;
+   drmVersionPtr drm_version;
+   const char drm_path[] = "/dev/dri/card";
+   const char *drm_devname;
+   char *path;
+   size_t size;
+   const struct driver_name_map *m;
+
+   size = sizeof drm_path + sizeof fd_id;
+   path = malloc(size);
+   if (!path)
+       return NULL;
+   snprintf(path, size, "%s%d", drm_path, fd_id);
+   if ((drm_fd = open (path, O_RDWR|O_CLOEXEC)) < 0)
+       return NULL;
+   drm_version = drmGetVersion(drm_fd);
+   if (!drm_version) {
+       fprintf(stderr, "Unable to get DRM version, weird.");
+       close(drm_fd);
+       drmFreeVersion (drm_version);
+       return NULL;
+   }
+   close(drm_fd);
+   for (m = g_driver_name_map; m->key != NULL; m++) {
+       if (drm_version->name_len >= m->key_len &&
+           strncmp(drm_version->name, m->key, m->key_len) == 0)
+           break;
+   }
+   drmFreeVersion(drm_version);
+
+   if (!m->name)
+       return NULL;
+
+   drm_devname = strdup(m->name);
+   if (!drm_devname)
+       return NULL;
+
+   return (char *) drm_devname;
+}
 
 void printUsage (void);
 
@@ -142,7 +202,8 @@ int main (int argc, char *argv[]) {
 	    printf ("\n");
 	break;
       case DRIVER: {
-	  const char *name = (*GetScreenDriver) (dpy, screenNum);
+	  if (!(name = (*GetScreenDriver) (dpy, screenNum)))
+              name = get_drm_device (screenNum);
 	  if (!name) {
 	      fprintf (stderr, "Screen \"%d\" is not direct rendering capable.\n",
 		       screenNum);
@@ -154,12 +215,13 @@ int main (int argc, char *argv[]) {
 	  break;
       }
       case OPTIONS: {
-	  const char *name, *options;
-	  
+	  const char *options;
+
 	  if (screenNum == -1) {
 	      name = funcArg;
 	  } else {
-	      name = (*GetScreenDriver) (dpy, screenNum);
+	      if (!(name = (*GetScreenDriver) (dpy, screenNum)))
+                  name = get_drm_device (screenNum);
 	  }
 	  if (!name) {
 	      fprintf (stderr, "Screen \"%d\" is not direct rendering capable.\n",
@@ -180,7 +242,8 @@ int main (int argc, char *argv[]) {
       }
       case LIST:
 	for (i = 0; i < nScreens; ++i) {
-	    const char *name = (*GetScreenDriver) (dpy, i);
+	    if (!(name = (*GetScreenDriver) (dpy, i)))
+		name = get_drm_device (i);
 	    if (name)
 		printf ("Screen %d: %s\n", i, name);
 	    else
