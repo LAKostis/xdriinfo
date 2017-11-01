@@ -1,6 +1,6 @@
 Name: xdriinfo
 Version: 1.0.4
-Release: alt2
+Release: alt3
 Summary: query configuration information of DRI drivers
 License: MIT/X11
 Group: System/X11
@@ -10,7 +10,7 @@ Packager: Valery Inozemtsev <shrek@altlinux.ru>
 Source: %name-%version.tar
 Patch: %name-%version-%release.patch
 
-BuildRequires: libGL-devel xorg-glproto-devel xorg-util-macros
+BuildRequires: libGL-devel libdrm-devel xorg-glproto-devel xorg-util-macros
 
 %description
 xdriinfo  can be used to query configuration information of direct ren-
@@ -35,6 +35,9 @@ of the direct rendering drivers for all screens
 %_man1dir/*
 
 %changelog
+* Wed Nov 01 2017 L.A. Kostis <lakostis@altlinux.ru> 1.0.4-alt3
+- Added dri device detection via libdrm.
+
 * Sun May 28 2017 L.A. Kostis <lakostis@altlinux.ru> 1.0.4-alt2
 - Added patch:
   Fix-xdriinfo-not-working-with-glvnd: fix glx calls to work with GLVND setup
