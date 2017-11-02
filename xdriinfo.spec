@@ -1,12 +1,13 @@
 Name: xdriinfo
-Version: 1.0.4
-Release: alt3
+Version: 1.0.5
+Release: alt1
 Summary: query configuration information of DRI drivers
 License: MIT/X11
 Group: System/X11
 Url: http://xorg.freedesktop.org
 Packager: Valery Inozemtsev <shrek@altlinux.ru>
 
+# https://github.com/LAKostis/xdriinfo.git master
 Source: %name-%version.tar
 Patch: %name-%version-%release.patch
 
@@ -35,6 +36,9 @@ of the direct rendering drivers for all screens
 %_man1dir/*
 
 %changelog
+* Thu Nov 02 2017 L.A. Kostis <lakostis@altlinux.ru> 1.0.5-alt1
+- 1.0.5.
+
 * Wed Nov 01 2017 L.A. Kostis <lakostis@altlinux.ru> 1.0.4-alt3
 - Added dri device detection via libdrm.
 
